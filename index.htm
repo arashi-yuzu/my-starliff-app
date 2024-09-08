@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIFF App</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+  <h1>LIFF App</h1>
+  <button id="getProfile">Get Profile</button>
+  <script>
+    // 替換 YOUR_LIFF_ID 為你的 LIFF ID
+    liff.init({ liffId: "2006278785-RBo8olGK" })
+    .then(() => {
+      console.log("LIFF initialized");
+      document.getElementById("getProfile").addEventListener("click", function() {
+        liff.getProfile().then(profile => {
+          alert("Hello, " + profile.displayName);
+        }).catch(console.error);
+      });
+    })
+    .catch((err) => {
+      console.error("LIFF initialization failed", err);
+    });
+  </script>
+</body>
+</html>
