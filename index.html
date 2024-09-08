@@ -6,9 +6,13 @@
     <title>LIFF Example</title>
 </head>
 <body>
-    <h1>儲存資料範例</h1>
-    <input type="text" id="userInput" placeholder="輸入訊息">
-    <button onclick="saveData()">儲存訊息</button>
+    <h1>小奕考卷評語</h1>
+    <input type="text" id="userInput1" placeholder="請輸入國文成績"><br />
+    <input type="text" id="userInput2" placeholder="請輸入數學成績"><br />
+    <input type="text" id="userInput3" placeholder="請輸入英文成績"><br />
+    <input type="text" id="userInput4" placeholder="請輸入理化成績"><br />
+    <input type="text" id="userInput5" placeholder="請輸入社會成績"><br />
+    <button onclick="saveData()">送出考卷</button>
     <p id="savedMessage"></p>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
@@ -17,15 +21,28 @@
         liff.init({ liffId: "2006278785-RBo8olGK" })
             .then(() => {
                 // LIFF 初始化完成
-                document.getElementById("savedMessage").innerText = "LIFF 已初始化";
+                //document.getElementById("savedMessage").innerText = "LIFF 已初始化";
             })
             .catch(err => console.error(err));
 
         // 儲存資料到 LocalStorage
         function saveData() {
-            const input = document.getElementById('userInput').value;
-            localStorage.setItem('userMessage', input);
-            document.getElementById('savedMessage').innerText = `儲存的訊息是：${input}`;
+            const input1 = document.getElementById('userInput1').value;
+            const input2 = document.getElementById('userInput2').value;
+            const input3 = document.getElementById('userInput3').value;
+            const input4 = document.getElementById('userInput4').value;
+            const input5 = document.getElementById('userInput5').value;
+            var total = input1 + input2 + input3 + input4 + input5;
+            var commet;
+            if (total >= 450) {
+              commet = '小奕超強的';
+            } elseif (total >= 400 && total <450) {
+              commet = '小奕很厲害';
+            } else {
+              commet = '小奕要再加油';
+            }
+            localStorage.setItem('userMessage', commet);
+            document.getElementById('savedMessage').innerText = `評語：${commet}`;
         }
     </script>
 </body>
