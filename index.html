@@ -3,25 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LIFF App</title>
+  <title>LIFF App with Google Sheets</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
-  <h1>LIFF App</h1>
-  <button id="getProfile">Get Profile</button>
+  <h1>LIFF App with Google Sheets</h1>
+  <form id="user-input-form">
+    <label for="user-message">輸入訊息：</label><br>
+    <input type="text" id="user-message" name="message" placeholder="請輸入訊息" required><br><br>
+    <button type="submit">送出</button>
+  </form>
+
   <script>
-    // 替換 YOUR_LIFF_ID 為你的 LIFF ID
-    liff.init({ liffId: "2006278785-RBo8olGK" })
+    // 初始化 LIFF
+    liff.init({ liffId: '2006278785-RBo8olGK' })
     .then(() => {
-      console.log("LIFF initialized");
-      document.getElementById("getProfile").addEventListener("click", function() {
-        liff.getProfile().then(profile => {
-          alert("Hello, " + profile.displayName);
-        }).catch(console.error);
-      });
+      console.log('LIFF 初始化成功');
     })
     .catch((err) => {
-      console.error("LIFF initialization failed", err);
+      console.error('LIFF 初始化失敗:', err);
+    });
+
+    // 監聽表單提交事件，並將輸入內容發送到 Google Apps Script
+    document.getElementById('user-input-form').addEventListener('submit', function(event) {
+      event.preventDefault(); // 防止表單預設提交行為
+
+      const userMessage = document.getElementById('user-message').value;
+
+      // 獲取使用者資料
+      liff.getProfile()
+      .then(profile => {
+        const userId = profile.userId;
+        const displayName = profile.displayName;
+
+        // 構造要發送的資料
+        const data = {
+          userId: userId,
+          displayName: displayName,
+          message: userMessage
+        };
+
+        // 發送資料到 Google Apps Script
+        fetch('https://script.google.com/macros/s/AKfycbyKuuzDH3ugyKVhe0zkcJrv-1jreb2V2S-5oAQgB5v4SH6SwXARdpKnqNUS49FPrYQF/exec', { // 替換為你的 Web App URL
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+          if (result.status === 'success') {
+            alert('訊息已儲存成功！');
+            document.getElementById('user-input-form').reset(); // 清空表單
+          } else {
+            alert('儲存失敗：' + result.message);
+          }
+        })
+        .catch(error => {
+          console.error('儲存失敗:', error);
+          alert('儲存失敗，請稍後再試。');
+        });
+      })
+      .catch(err => {
+        console.error('取得使用者資料失敗:', err);
+        alert('取得使用者資料失敗，請重新登入。');
+      });
     });
   </script>
 </body>
