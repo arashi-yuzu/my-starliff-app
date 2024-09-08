@@ -40,12 +40,12 @@
       })
       .then(response => response.json())
       .then(data => {
-        alert('訊息已儲存成功: ' + data.status);
+        console.log('Success:', data);
       })
       .catch(error => {
-        console.error('儲存失敗:', error);
+        console.error('Error:', error);
       });
-    });
+    });    
   </script>
 </body>
 </html>
