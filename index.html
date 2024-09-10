@@ -1,49 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIFF Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>嚕咪毛！飲料訂購表</title>
+    <script src="https://d.line-scdn.net/liff/1.0/sdk.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script>
+	function initializeApp(data) {  //初始化LIFF
+		var userid = data.context.userId;  //取得ID
+	}
+
+	function pushMsg(pname, pdatatime, proom) {
+		if (pname == '' || pdatatime == '' || proom == '') {  //資料檢查
+			alert('每個項目都必須輸入！');
+			return;
+		}
+		var msg = "###";  //回傳訊息字串
+		msg = msg + pname + "/";
+		msg = msg + amount + "/";
+		msg = msg + pdatatime + "/";
+		msg = msg + proom;
+		liff.sendMessages([  //推播訊息
+			{ type: 'text',
+			  text: msg
+			}
+		])
+			.then(() => {
+				liff.closeWindow();  //關閉視窗
+			});
+	}
+
+	$(document).ready(function () {
+		liff.init(function (data) {  //初始化LIFF
+			initializeApp(data);
+		});
+		
+		$('#sure').click(function (e) {  //按下確定鈕
+			pushMsg($('#name').val(), $('#datetime').val(), $('#sel_room').val());
+		});
+	});
+</script>
 </head>
 <body>
-    <h1>小奕考卷評語</h1>
-    <input type="text" id="userInput1" placeholder="請輸入國文成績"><br />
-    <input type="text" id="userInput2" placeholder="請輸入數學成績"><br />
-    <input type="text" id="userInput3" placeholder="請輸入英文成績"><br />
-    <input type="text" id="userInput4" placeholder="請輸入理化成績"><br />
-    <input type="text" id="userInput5" placeholder="請輸入社會成績"><br />
-    <button onclick="saveData()">送出</button>
-    <p id="savedMessage"></p>
-
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script>
-        // 初始化 LIFF
-        liff.init({ liffId: "2006278785-RBo8olGK" })
-            .then(() => {
-                // LIFF 初始化完成
-                document.getElementById("savedMessage").innerText = "";
-            })
-            .catch(err => console.error(err));
-
-        // 儲存資料到 LocalStorage
-        function saveData() {
-            const input1 = document.getElementById('userInput1').value;
-            const input2 = document.getElementById('userInput2').value;
-            const input3 = document.getElementById('userInput3').value;
-            const input4 = document.getElementById('userInput4').value;
-            const input5 = document.getElementById('userInput5').value;
-            var total = Number(input1) + Number(input2) + Number(input3) + Number(input4) + Number(input5);
-            var commet;
-            if (total >= 450) {
-              commet = '小奕超強的';
-            } else if (total >= 400 && total <450) {
-              commet = '小奕很厲害';
-            } else {
-              commet = '小奕要再加油';
-            }
-            localStorage.setItem('userMessage', commet);
-            document.getElementById('savedMessage').innerText = `總分：${total}，評語：${commet}`;
-        }
-    </script>
+    <div class="row" style="margin: 10px">
+        <div class="col-12" style="margin: 10px">
+            <label>姓名</label>
+            <input type="text" id="name" class="form-control" />
+            <br />
+            <label>日期</label>
+            <input type="date" id="datetime" value="" class="form-control" />
+            <br />
+            <label>飲料數量</label>
+            <input type="number" id="txb_amount" class="form-control" />
+            <br />
+            <label>品項</label>
+            <select id="sel_drink" class="form-control">
+                <option selected>茉莉綠茶</option>
+                <option>珍珠紅茶</option>
+                <option>紅茶拿鐵</option>
+                <option>四季春茶</option>
+                <option>冬瓜檸檬</option>
+            </select>
+            <br />
+            <label>加料</label>
+            <select id="sel_drink" class="form-control">
+                <option selected>無</option>
+                <option>白玉珍珠</option>
+                <option>椰果</option>
+                <option>仙草</option>
+                <option>小芋園</option>
+            </select>
+            <br />
+            <button class="btn btn-warning btn-block" id="sure">確定</button>
+        </div>
+    </div>
 </body>
 </html>
